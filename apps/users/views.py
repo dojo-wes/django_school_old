@@ -10,12 +10,23 @@ def new(req):
   return render(req, 'users/new.html')
 
 def create(req):
-  errors = User.objects.validate_and_create_user(req.POST)
-  if len(errors) > 0:
-    for error in errors:
+  valid, result = User.objects.validate_and_create_user(req.POST)
+  if not valid:
+    for error in result:
       messages.error(req, error)
     return redirect('users:new')
+  
+  req.session['user_id'] = result.id
   return redirect('users:index')
 
 def login(req):
+  valid, result = User.objects.validate_login(req.POST)
+  print "*" * 80
+  print valid, result
+  if not valid:
+    for error in result:
+      messages.error(req, error)
+    return redirect('users:new')
+  
+  req.session['user_id'] = result.id
   return redirect('users:index')

@@ -19,17 +19,36 @@ class UserManager(models.Manager):
       errors.append('Password must be at least 8 characters long.')
 
     if len(errors) > 0:
-      return errors
+      return (False, errors)
     
     try:
       self.get(email=email)
       errors.append('Email already in use.')
-      return errors
+      return (False, errors)
     except:
       pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-      print pw_hash
-      self.create(email=email, password_hash=pw_hash)
-      return errors
+      user = self.create(email=email, password_hash=pw_hash)
+      return (True, user)
+
+  def validate_login(self, form_data):
+    email = form_data['email']
+    password = form_data['password']
+
+    errors = []
+
+    user = self.filter(email=email)
+    if len(user) > 0:
+      is_matching = bcrypt.checkpw(password.encode(), user[0].password_hash.encode())
+      print is_matching, "<------- is_matching"
+
+      if is_matching:
+        return (True, user[0])
+
+      errors.append('Username and password combo not valid.')
+      return (False, errors)
+
+    errors.append('Username and password combo not valid.')
+    return (False, errors)
 
 
 class User(models.Model):
