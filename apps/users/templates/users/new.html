@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  {% load static %}
+  <script 
+   src="https://code.jquery.com/jquery-3.2.1.min.js" 
+   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" 
+   crossorigin="anonymous"></script>
+  <script src="{% static 'users/scripts/script.js' %}"></script>
   <title>Document</title>
 </head>
 <body>
@@ -17,10 +23,10 @@
     </ul>
   {% endif %}
   <h2>Register Here</h2>
-  <form action="{% url 'users:create' %}" method="post">
+  <form id="reg-form" action="{% url 'users:create' %}" method="post">
     {% csrf_token %}
-    Email: <input type="text" name="email" placeholder="rmvw@vanillaice.com">
-    Password: <input type="password" name="password">
+    Email: <input id="reg-email" type="text" name="email" placeholder="rmvw@vanillaice.com">
+    Password: <input id="reg-password" type="password" name="password">
     <input type="submit" value="Register">
   </form>
   <h2>Login Here</h2>

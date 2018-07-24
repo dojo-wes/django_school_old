@@ -1,5 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
+from django.http import JsonResponse
 from django.contrib import messages
+from django.core import serializers
+import json
 from .models import User
 
 # Create your views here.
@@ -12,9 +15,10 @@ def new(req):
 def create(req):
   valid, result = User.objects.validate_and_create_user(req.POST)
   if not valid:
-    for error in result:
-      messages.error(req, error)
-    return redirect('users:new')
+    response = {
+      'errors': result
+    }
+    return HttpResponse(json.dumps(response), status=400)
   
   req.session['user_id'] = result.id
   return redirect('users:index')
